@@ -1,0 +1,357 @@
+	<!DOCTYPE HTML>
+	<!--
+	    Phantom by HTML5 UP
+	    html5up.net | @ajlkn
+	    Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+	-->
+	<html xmlns:th="http://www.thymeleaf.org">
+	<head>
+	<title>Generic - Phantom by HTML5 UP</title>
+	<meta charset="utf-8" />
+	<meta name="viewport"
+		content="width=device-width, initial-scale=1, user-scalable=no" />
+	<link rel="stylesheet" th:href="@{/assets/css/main.css}" />
+	<noscript>
+		<link rel="stylesheet" th:href="@{/assets/css/noscript.css}" />
+	</noscript>
+	<style>
+	 body {
+	            margin: 10%;
+	              font-weight: bold;
+	        }
+	    /* 댓글 작성 폼 스타일 */
+	    #commentForm {
+	        margin-bottom: 20px;
+	    }
+	    #commentForm label {
+	        font-weight: bold;
+	    }
+	    #commentForm textarea {
+	        width: 100%;
+	        height: 100px;
+	        resize: none;
+	        margin-bottom: 10px;
+	    }
+	    #commentForm button {
+	       
+	        color: white;
+	        padding: 10px 20px;
+	        border: none;
+	        cursor: pointer;
+	        border-radius: 5px;
+	    }
+	    #commentForm button:hover {
+	        background-color: #ccc;
+	    }
+	
+	    /* 댓글 목록 스타일 */
+	    #commentList {
+	        list-style-type: none;
+	        padding: 0;
+	    }
+	    #commentList li {
+	        border-bottom: 1px solid #ddd;
+	        padding: 10px 0;
+	    }
+	    #commentList li:last-child {
+	        border-bottom: none;
+	    }
+	    
+	</style>
+	
+	</head>
+	<body class="is-preload">
+		<!-- Wrapper -->
+		<div id="wrapper">
+	
+			<!-- Header -->
+			<header id="header" th:replace="include/header :: header"></header>
+	
+			<!-- Menu -->
+			<nav id="menu">
+				<h2>Menu</h2>
+				<ul>
+					<li><a th:href="@{/index}">구이/찜</a></li>
+					<li><a th:href="@{/view}">찌개/탕</a></li>
+					<li><a th:href="@{/view}">분식</a></li>
+					<li><a th:href="@{/view}">면류</a></li>
+					<li><a th:href="@{/elements.html}">밥류/볶음</a></li>
+				</ul>
+			</nav>
+	
+			<!-- Main -->
+			<div id="main">
+				<div class="content mt-3">
+					<form action="/submit_recipe" method="post" class="recipe-form">
+						<div class="mb-3 mt-3">
+							<label for="title">TITLE</label> <input type="text"
+								class="form-control" id="title" name="title" readonly="readonly"
+								th:value="${board.title}" />
+						</div>
+						<div class="mb-3" >
+							<label for="writer">WRITER</label> <input type="text"
+								class="form-control" id="writer" name="writer"
+								readonly="readonly" th:value="${board.writer.username}" />
+						</div>
+						<div class="mb-3 mt-3">
+	    <label for="content">CONTENT</label>
+<div style="text-align: center;">
+    <img th:src="@{'/images/pic0' + ${board.num} + '.jpg'}" alt="" style="display: block; margin: 0 auto;" />
+</div>
+
+	    <textarea class="form-control" rows="10" id="content" name="content" readonly="readonly" th:text="${board.content}" style="margin-top: 5%;
+	    font-weight: bold;">
+	</textarea>
+	</div>
+	
+						<div class="mb-3 mt-3">
+							<label for="content">INGREDIENTS</label>
+							<table class="table">
+								<thead>
+									<tr>
+										<th>Name</th>
+										<th>Unit</th>
+										<th>Checkbox</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr th:each="ingr : ${ingrBoards}">
+										<td th:text="${ingr.name}"></td>
+										<td th:text="${ingr.unit }">
+										</td>
+										<td><button type="button" class="btn btn-primary CheckBox"
+												data-row-id="row_${rowStat.index}"
+												th:attr="data-board-num=${board.num}" style="width:120px;">미보유</button></td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+						<div class="mb-3 mt-3">
+							<label for="content">TOTALPRICE</label>
+							<textarea class="form-control" id="total" name="total"
+								readonly="readonly" th:text="${total+' 원'}" style="resize:none; width:20%; height:75px;"></textarea>
+						</div>
+					</form>
+					<div th:if="${#authorization.expression('hasRole(''ADMIN'')')}"></div>
+					<button type="button" class="btn btn-primary" id="btnUpdate"
+						th:attr="data-board-num=${board.num}">수정</button>
+					<button type="button" class="btn btn-primary" id="btnDelete"
+						th:attr="data-board-num=${board.num}">삭제</button>
+				</div>
+			</div>
+		</div>
+	
+	   
+	         
+	
+	            <!-- Comment List -->
+	            <h1>댓글 목록</h1>
+	            <ul id="commentList">
+	                <!-- 댓글 목록은 JavaScript로 동적으로 채워질 예정입니다. -->
+	            </ul>
+	               <div th:unless="${#authorization.expression('isAuthenticated()')}">
+	                <p>댓글을 작성하려면 로그인하세요.</p>
+	            </div>
+	              <div th:if="${#authorization.expression('isAuthenticated()')}">
+	                <h1>댓글 작성</h1>
+	              <form id="commentForm">
+	    <!-- 사용자명을 자동으로 불러와서 폼에 추가 -->
+	    <label for="username">사용자명:</label><br>
+	    <input type="text" id="username" name="username" readonly="readonly" th:value="${#authentication.principal.username}" /><br><br>
+	    <!-- 댓글 내용 입력 -->
+	    <label for="content">내용:</label><br>
+	    <textarea id="content" name="content" rows="4" cols="50"></textarea><br><br>
+	    <!-- 댓글 작성 버튼 -->
+	    <button type="submit">댓글 작성</button>
+	</form>
+	
+	            </div>
+	
+	
+	
+	<script src="https://code.jquery.com/jquery-3.4.1.js"></script>
+	<script>
+	console.log("Image URL:", "${board.image_url}");
+	$(document).ready(function() {
+	    loadComments(); // 페이지가 로드될 때 댓글 목록을 가져옵니다.
+	
+	    // 댓글 폼 제출 이벤트 처리
+	    $('#commentForm').on('submit', function(e) {
+	        e.preventDefault(); // 폼 기본 제출 막기
+	        var formData = new FormData(this);
+	        $.ajax({
+	            type: 'POST',
+	            url: '/comments',
+	            data: formData,
+	            processData: false,
+	            contentType: false,
+	            success: function(response) {
+	                console.log("댓글이 성공적으로 작성되었습니다.");
+	                loadComments(); // 댓글 목록을 다시 불러와서 업데이트
+	            },
+	            error: function(error) {
+	                console.log('댓글 작성 실패', error);
+	            }
+	        });
+	    });
+	});
+	
+	//댓글 목록을 로드하는 함수
+	function loadComments() {
+	    console.log("댓글 목록을 불러오는 중입니다.");
+	    // Clear the existing comment list
+	    $("#commentList").empty();
+	    
+	    $.ajax({
+	        type: "GET",
+	        url: "/comments", // 댓글 목록을 가져오는 엔드포인트 URL
+	        success: function(comments) {
+	            console.log("서버에서 받아온 댓글 목록:", comments);
+	            // 받아온 댓글 목록을 화면에 표시하기
+	            comments.forEach(function(comment) {
+	                addCommentToList(comment);
+	            });
+	        },
+	        error: function() {
+	            console.error("댓글 목록을 가져오는데 실패했습니다.");
+	        }
+	    });
+	}
+	// 댓글을 화면에 추가하는 함수
+	function addCommentToList(comment) {
+	    var listItem = $("<li>").text("사용자 명: "+ comment.writer.username + ": " + "댓글: " +comment.content);
+	    $("#commentList").append(listItem);
+	}
+	
+	
+			// 수정 버튼 클릭 시
+			$("#btnUpdate").click(function() {
+				// 확인 다이얼로그 출력
+				if (!confirm("정말 수정할까요?")) {
+					return false;
+				}
+				// 수정할 게시물 번호 가져오기
+				var boardNum = $(this).data("board-num");
+				// 수정 페이지로 이동
+				location.href = "/update/" + boardNum;
+			});
+	
+			// 삭제 버튼 클릭
+			$("#btnDelete").click(function() {
+				// 확인 다이얼로그 출력
+				if (!confirm("정말 삭제할까요?")) {
+					return false;
+				}
+				var boardNum = $(this).data("board-num");
+				var title = $("#title").val();
+				$.ajax({
+					type : "DELETE",
+					url : "/delete/" + boardNum,
+					contentType : "application/json",
+					data : JSON.stringify({
+						"title" : title
+					}),
+					success : function(resp) {
+						alert("삭제 성공")
+						location.href = "/index";
+					},
+					error : function(e) {
+						alert("삭제 실패" + e)
+					}
+				});
+			
+	
+						var formsData = []; // 모든 폼 데이터를 저장할 배열
+	
+						// 재료 폼 데이터를 객체로 변환하여 배열에 추가
+						$('.ingredient-form').each(
+								function() {
+									var Iform = {
+										title : $('#title').val(),
+										categoryId : $(this).find(
+												'select[name="categoryId"]').val(),
+										name : $(this).find('select[name="name"]')
+												.val(),
+										unit : $(this)
+												.find('textarea[name="unit"]')
+												.val()
+									};
+									formsData.push(Iform);
+								});
+	
+						// JSON 형식으로 변환
+						var jsonData1 = JSON.stringify(formsData);
+	
+						// AJAX 요청
+						$.ajax({
+							url : '/submit_all_forms-delete', // 서버 엔드포인트
+							method : 'DELETE',
+							contentType : "application/json;charset=utf-8", // JSON 형식으로 전송
+							data : jsonData1,
+							success : function(response) {
+								// 성공 시 처리할 내용
+								console.log(response);
+								// 페이지를 리다이렉트
+								window.location.href = '/index'; // 리다이렉트할 페이지의 경로
+							},
+							error : function(xhr, status, error) {
+								// 에러 처리
+								console.error(xhr.responseText);
+							}
+						});
+					});
+	
+			// 보유/미보유 버튼 클릭 시
+			$(".CheckBox")
+					.click(
+							function() {
+								var buttonText = $(this).text();
+								var ingredientPriceString = $(this).closest("tr")
+										.find(".unit").text().trim(); // 재료 가격 추출
+								var ingredientName = $(this).closest("tr").find(
+										"td:first").text().trim(); // 재료 이름 추출
+								var boardNum = $(this).data("board-num");
+	
+								// 보유 상태인지 여부에 따라 데이터 구성
+								var formData = {
+									ingredientName : ingredientName,
+									isOwned : buttonText === "보유",
+									boardNum: boardNum
+								};
+	
+								// AJAX를 사용하여 서버에 데이터 전송
+								$
+										.ajax({
+											type : "POST",
+											contentType : "application/json;charset=utf-8",
+											url : "/updatePrice/"+boardNum, // 서버 엔드포인트
+											data : JSON.stringify(formData), // JSON 데이터로 변환하여 전송
+											success : function(price) {
+												// 성공 시 총 가격을 업데이트
+												var currentTotal = parseInt($(
+														"#total").text().replace(
+														" 원", ""));
+												var updatedTotal = buttonText === "보유" ? currentTotal
+														- price
+														: currentTotal - price;
+												$("#total").text(
+														updatedTotal + " 원");
+											},
+											error : function(error) {
+												console.error("가격 업데이트 실패:", error);
+											}
+										});
+	
+								// 버튼 텍스트 변경
+								if (buttonText === "미보유") {
+									$(this).text("보유");
+									formData.isOwned = true; // 버튼 텍스트가 "미보유"일 때는 isOwned를 true로 설정
+								} else if (buttonText === "보유") {
+									$(this).text("미보유");
+									formData.isOwned = false; // 버튼 텍스트가 "보유"일 때는 isOwned를 false로 설정
+								}
+							});
+		</script>
+		
+	</body>
+	</html>

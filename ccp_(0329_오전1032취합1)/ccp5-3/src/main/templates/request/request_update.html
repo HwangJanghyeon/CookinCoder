@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<meta charset="UTF-8">
+<title>Your Title Here</title>
+<!-- 기타 메타데이터 및 스크립트 -->
+
+<!-- 외부 CSS 파일 연결 -->
+<link rel="stylesheet" href="/assets/css/main.css">
+ <style>
+        body {
+            margin: 10%;
+        }
+    </style>
+</head>
+
+<body>
+	<!-- Header -->
+	<header id="header" th:replace="include/header :: header"></header>
+
+	<!-- Menu -->
+	<nav id="menu">
+		<h2>Menu</h2>
+		<ul>
+			<li><a th:href="@{/}">Home</a></li>
+			<li><a th:href="@{/view}">Ipsum veroeros</a></li>
+			<li><a th:href="@{/view}">Tempus etiam</a></li>
+			<li><a th:href="@{/view.html}">Consequat dolor</a></li>
+			<li><a th:href="@{/elements.html}">Elements</a></li>
+		</ul>
+	</nav>
+	<div class="content mt-3" th:if="${rBoard != null}">
+    <form th:action="@{/request/request_update/{num}(num=${rBoard.num})}" method="post">
+        <div class="mb-3 mt-3">
+            <label for="title">제목</label>
+            <input type="text" class="form-control" id="title" th:value="${rBoard.title}" placeholder="제목을 입력하세요" name="title" />
+        </div>
+        <div class="mb-3">
+            <label for="writer">작성자</label>
+            <input type="text" class="form-control" th:value="${rBoard.writer}" id="writer" name="writer" readonly="readonly" />
+        </div>
+        <div class="mb-3 mt-3">
+            <label for="content">내용</label>
+            <textarea class="form-control" rows="10" id="content" th:text="${rBoard.content}" name="content"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">수정</button>
+    </form>
+</div>
+</body>

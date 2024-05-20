@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/MyPage_set"
+        android:orderInCategory="100"
+        android:title="Request"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/Request_set"
+        android:orderInCategory="100"
+        android:title="MyPage"
+        app:showAsAction="never"
+        />
+</menu>

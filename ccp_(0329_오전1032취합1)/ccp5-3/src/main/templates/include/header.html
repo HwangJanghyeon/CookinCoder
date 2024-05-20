@@ -1,0 +1,28 @@
+<!-- Header -->
+<header id="header">
+    <div class="inner">
+		
+    
+        <!-- Nav -->
+        <nav>
+    <ul class="menu-list">
+        <li><a href="/index">Home</a></li>
+     <li sec:authorize="isAuthenticated()"><a href="/request/request_list">요청 게시판</a></li>
+        
+       
+         <li sec:authorize="isAuthenticated()"><a href="/insert">글 작성</a></li>
+        
+        <!-- 로그인한 경우에는 "로그아웃" 표시, 그렇지 않은 경우에는 "로그인" 표시 -->
+        <li sec:authorize="isAuthenticated()"><a href="/logout">로그아웃</a></li>
+        <li sec:authorize="!isAuthenticated()"><a href="/member/login">로그인</a></li>
+        
+        <li><a href="/member/join">회원가입</a></li>
+        <li><a href="#menu">Menu</a></li>
+    </ul>
+</nav>
+
+    </div>
+</header>
+
+
+

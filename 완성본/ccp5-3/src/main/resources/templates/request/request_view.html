@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<meta charset="UTF-8">
+<title>Your Title Here</title>
+<!-- 기타 메타데이터 및 스크립트 -->
+<!-- 외부 CSS 파일 연결 -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<script src="https://code.jquery.com/jquery-3.4.1.js"></script>
+<style>
+body {
+	margin: 10%;
+}
+</style>
+</head>
+
+<body>
+	<!-- Header -->
+	<header id="header" th:replace="include/header :: header"></header>
+	<!-- Menu -->
+	<nav id="menu">
+		<h2>Menu</h2>
+		<ul>
+			<li><a th:href="@{/}">Home</a></li>
+			<li><a th:href="@{/view}">Ipsum veroeros</a></li>
+			<li><a th:href="@{/view}">Tempus etiam</a></li>
+			<li><a th:href="@{/view.html}">Consequat dolor</a></li>
+			<li><a th:href="@{/elements.html}">Elements</a></li>
+		</ul>
+	</nav>
+	<div class="content mt-3" th:if="${rBoard != null}">
+		<form action="request_insert" method="post">
+			<input type="hidden" id="boardNum" th:value="${rBoard.num}" />
+			<div class="mb-3 mt-3">
+				<label for="title">제목</label> <input type="text"
+					class="form-control" id="title" th:value="${rBoard.title}"
+					placeholder="제목을 입력하세요" name="title" readonly="readonly" />
+			</div>
+			<div class="mb-3">
+				<label for="writer">작성자</label> <input type="text"
+					class="form-control" th:value="${rBoard.writer}" id="writer"
+					name="writer" readonly="readonly" />
+			</div>
+			<div class="mb-3 mt-3">
+				<label for="content">내용</label>
+				<textarea class="form-control" rows="10" id="content"
+					th:text="${rBoard.content}" name="content" readonly="readonly"></textarea>
+			</div>
+			<button type="button" class="btn btn-primary" id="btnUpdate"
+				th:attr="data-board-num=${rBoard.num}">수정</button>
+			<button type="button" class="btn btn-primary" id="btnDelete"
+				th:attr="data-board-num=${rBoard.num}">삭제</button>
+		</form>
+	</div>
+</body>
+<script>
+	//수정 버튼 클릭 시
+	$("#btnUpdate").click(function() {
+		// 확인 다이얼로그 출력
+		if (!confirm("정말 수정할까요?")) {
+			return false;
+		}
+		// 수정할 게시물 번호 가져오기
+		var boardNum = $("#boardNum").val();
+		// 수정 페이지로 이동
+		location.href = "/request/request_update/" + boardNum;
+	});
+
+	$("#btnDelete").click(function() {
+		// 확인 다이얼로그 출력
+		if (!confirm("정말 삭제할까요?")) {
+			return false;
+		}
+		var boardNum = $("#boardNum").val();
+		$.ajax({
+			type : "DELETE",
+			url : "/request/delete/" + boardNum,
+			contentType : "application/json",
+			success : function(resp) {
+				alert("삭제 성공")
+				location.href = "/request/request_list";
+			},
+			error : function(e) {
+				alert("삭제 실패" + e)
+			}
+		});
+	});
+	window.onload = function() {
+		// 안드로이드 웹뷰인 경우에만 실행
+		var userAgent = navigator.userAgent.toLowerCase();
+		var isAndroidWebView = userAgent.indexOf('android') > -1
+				&& userAgent.indexOf('wv') > -1;
+
+		if (isAndroidWebView) {
+			// 안드로이드 웹뷰에서는 header와 nav 요소 숨기기
+			var header = document.getElementById("header");
+			var nav = document.getElementById("menu");
+
+			if (header && nav) {
+				header.style.display = "none";
+				nav.style.display = "none";
+			}
+		}
+	}
+</script>
+</script>
+</html>

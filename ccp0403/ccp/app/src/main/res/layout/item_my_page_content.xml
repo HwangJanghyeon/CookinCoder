@@ -1,0 +1,26 @@
+<!-- item_my_page_content.xml -->
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+        <variable
+            name="board"
+            type="com.example.ccp.model.BoardDTO" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Title TextView -->
+        <TextView
+            android:id="@+id/tvTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@{board.title}" />
+
+        <!-- Add other views for your item layout -->
+
+    </LinearLayout>
+
+</layout>

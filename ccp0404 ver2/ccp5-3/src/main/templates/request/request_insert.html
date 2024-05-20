@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<title>Your Title Here</title>
+	<!-- 기타 메타데이터 및 스크립트 -->
+
+	<!-- 외부 CSS 파일 연결 -->
+	<link rel="stylesheet" href="/assets/css/main.css">
+	 <style>
+        body {
+            margin: 10%;
+        }
+    </style>
+</head>
+
+<body>
+	<!-- Header -->
+                    <header id="header" th:replace="include/header :: header"></header>
+
+                <!-- Menu -->
+                  <nav id="menu">
+    <h2>Menu</h2>
+    <ul>
+        <li><a th:href="@{/}">Home</a></li>
+        <li><a th:href="@{/view}">Ipsum veroeros</a></li>
+        <li><a th:href="@{/view}">Tempus etiam</a></li>
+        <li><a th:href="@{/view.html}">Consequat dolor</a></li>
+        <li><a th:href="@{/elements.html}">Elements</a></li>
+    </ul>
+</nav>
+	<div>
+		<div class="content mt-3">
+			<form action="request_insert" method="post">
+				<div class="mb-3 mt-3">
+					<label for="title">TITLE</label>
+					<input type="text" class="form-control" id="title" placeholder="Enter title" name="title" />
+				</div>
+				<div class="mb-3">
+					<label for="writer">WRITER</label>
+					<input type="text" class="form-control" id="writer" name="writer" />
+				</div>
+				<div class="mb-3 mt-3">
+					<label for="content">CONTENT</label>
+					<textarea class="form-control" rows="10" id="content" name="content"></textarea>
+				</div>
+				<button type="submit" class="btn btn-primary">작성</button>
+			</form>
+		</div>
+	</div>
+</body>

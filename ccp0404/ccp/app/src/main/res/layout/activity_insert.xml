@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".InsertActivity">
+
+
+    <ScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+
+        android:layout_marginTop="20dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- 레시피 폼 -->
+            <LinearLayout
+                android:id="@+id/recipeForm"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_margin="10dp">
+
+
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="TITLE" />
+
+                <EditText
+                    android:id="@+id/etTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:hint="Enter title" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="CONTENT" />
+
+                <EditText
+                    android:id="@+id/etContent"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Enter content"
+                    android:inputType="textMultiLine"
+                    android:minLines="5" />
+
+                <Spinner
+                    android:id="@+id/spinnerRecipeCategory"
+                    android:layout_width="match_parent"
+                    android:layout_height="39dp"
+                    android:layout_marginTop="8dp" />
+
+                <Button
+                    android:id="@+id/btnUpload"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="사진 업로드" />
+            </LinearLayout>
+
+            <!-- 재료 폼 -->
+            <LinearLayout
+                android:id="@+id/newFormsSection"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_margin="10dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="재료 폼" />
+
+                <LinearLayout
+                    android:id="@+id/basicFormSection"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <Spinner
+                            android:id="@+id/spinnerCategory"
+                            android:layout_width="100dp"
+                            android:layout_height="40dp"
+
+                            android:prompt="@string/category_prompt" />
+
+                        <Spinner
+                            android:id="@+id/spinnerName"
+                            android:layout_width="120dp"
+                            android:layout_height="40dp"
+                            android:layout_marginStart="10dp"
+                            android:layout_marginEnd="10dp"
+                            android:prompt="@string/ingredient_prompt" />
+
+                        <EditText
+                            android:id="@+id/etUnit"
+                            android:layout_width="80dp"
+                            android:layout_height="40dp"
+
+                            android:hint="수량(개/g)"
+                            android:inputType="number" />
+
+                        <Button
+                            android:id="@+id/btnAddForm"
+                            android:layout_width="50dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="10dp"
+                            android:layout_marginRight="10dp"
+                            android:text="+" />
+                    </LinearLayout>
+
+
+                </LinearLayout>
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/btnSubmitAll"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="모든 폼 제출"
+                android:layout_gravity="center" />
+
+        </LinearLayout>
+    </ScrollView>
+
+</RelativeLayout>

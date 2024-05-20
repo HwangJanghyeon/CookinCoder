@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Your Title Here</title>
+<!-- 기타 메타데이터 및 스크립트 -->
+
+<!-- 외부 CSS 파일 연결 -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<style>
+* {
+	margin: 0 auto;
+}
+
+body {
+	margin: 5%;
+}
+</style>
+</head>
+
+<body>
+	<div class="content mt-3">
+		<form action="/submit_recipe" method="post" class="recipe-form">
+			<div class="mb-3 mt-3">
+				<label for="title">TITLE</label> <input type="text"
+					class="form-control" id="title" th:value="${board.title }"
+					name="title" style="width: 90%;" />
+			</div>
+			<div class="mb-3">
+				<label for="writer">WRITER</label> <input type="text"
+					class="form-control" id="writer" name="writer"
+					th:value="${board.writer }" readonly="readonly" style="width: 90%;" />
+			</div>
+			<div class="mb-3 mt-3">
+				<label for="content">CONTENT</label>
+				<textarea class="form-control" rows="10" id="content" name="content"
+					th:text="${board.content }" style="width: 90%;"></textarea>
+			</div>
+		</form>
+	</div>
+	<div id="basicFormSection">
+		<form action="/insert_ingr" method="post" class="ingredient-form">
+			<div class="container-fluid">
+				<div class="row">
+					<div class="col">
+						<label for="categoryId">카테고리</label> <select name="categoryId">
+							<option value="">카테고리 선택</option>
+							<option th:each="category : ${categories}" th:value="${category}"
+								th:text="${category}"></option>
+						</select>
+					</div>
+					<div class="col">
+						<label for="name">식재료</label><select class="mb-3 col" name="name">
+							<option value="">이름 선택</option>
+						</select>
+					</div>
+					<div class="col">
+						<label for="unit">수량(개/g)</label>
+						<textarea id="unit" name="unit" style="resize:none; width:60%; height:75px;"></textarea>
+					</div>
+				</div>
+			</div>
+			<button class="btn btn-primary addForm">+</button>
+		</form>
+	</div>
+	<div id="newFormsSection">
+		<th:block th:each="ingrBoard : ${iboard}">
+			<form action="/insert_ingr" method="post" class="ingredient-form">
+				<div class="container-fluid">
+					<div class="row">
+						<div class="col">
+							<label for="categoryId">카테고리</label> <select name="categoryId">
+								<option value="">카테고리 선택</option>
+								<option th:each="category : ${categories}"
+									th:value="${category}"
+									th:selected="${category == ingrBoard.category}"
+									th:text="${category}"></option>
+							</select>
+						</div>
+						<div class="col">
+							<label for="name">식재료</label><select class="mb-3 col" name="name">
+								<option value="">이름 선택</option>
+								<option th:each="name : ${ingrBoard.name}" th:value="${name}"
+									th:selected="${name == ingrBoard.name}" th:text="${name}"></option>
+							</select>
+						</div>
+						<div class="col">
+							<label for="unit">수량(개/g)</label>
+							<textarea id="unit" name="unit" th:text="${ingrBoard.unit}" style="resize:none; width:60%; height:75px;"></textarea>
+						</div>
+					</div>
+				</div>
+				<button class="btn btn-primary addForm">+</button>
+				<button class="btn btn-secondary removeForm">-</button>
+			</form>
+		</th:block>
+	</div>
+
+
+	<div id="newFormsSection"></div>
+
+
+	<button id="submit-all">수정완료</button>
+
+</body>
+<script>
+	$(document)
+			.ready(
+					function() {
+						// "+(플러스)" 버튼 클릭 이벤트 처리
+						$(document)
+								.on(
+										'click',
+										'.addForm',
+										function(e) {
+											e.preventDefault(); // 기본 동작 방지
+
+											// 폼 복제
+											var newForm = $('.ingredient-form')
+													.first().clone();
+
+											// 입력 필드 초기화
+											newForm.find('textarea').val('');
+											newForm.find('select').prop(
+													'selectedIndex', 0);
+
+											// "-(마이너스)" 버튼 추가
+											newForm
+													.append('<button class="btn btn-secondary removeForm">-</button>');
+
+											// 새로운 폼을 새로운 섹션에 추가
+											$('#newFormsSection').append(
+													newForm);
+
+											// 선택된 카테고리에 따라 이름을 업데이트하는 함수 호출
+											updateNames(newForm);
+
+											return false;
+										});
+
+						// "-(마이너스)" 버튼 클릭 이벤트 처리
+						$(document).on('click', '.removeForm', function(e) {
+							e.preventDefault(); // 기본 동작 방지
+
+							// 해당 폼 제거
+							$(this).closest('.ingredient-form').remove();
+
+							return false;
+						});
+
+						// 새로운 폼에 대한 submit 이벤트 처리
+						$(document).on('submit', '.ingredient-form',
+								function(event) {
+									event.preventDefault(); // 기본 동작 방지
+
+									// 폼 데이터를 처리하는 코드 추가
+									console.log('폼 데이터를 처리합니다.');
+
+									return false;
+								});
+
+						// 선택된 카테고리에 따라 이름을 업데이트하는 함수
+						function updateNames(form) {
+							var categorySelect = form
+									.find('select[name="categoryId"]');
+							var nameSelect = form.find('select[name="name"]');
+
+							categorySelect
+									.on(
+											'change',
+											function() {
+												var categoryId = $(this).val();
+												if (categoryId !== "") {
+													$
+															.ajax({
+																url : "/get_names", // 카테고리에 따른 이름 목록을 가져올 엔드포인트
+																method : "GET",
+																data : {
+																	categoryId : categoryId
+																},
+																contentType : "application/json;charset=utf-8",
+																dataType : "json",
+																success : function(
+																		response) {
+																	nameSelect
+																			.empty(); // 셀렉트 박스 비우기
+																	nameSelect
+																			.append('<option value="">이름 선택</option>'); // 기본 옵션 추가
+																	response
+																			.forEach(function(
+																					name) {
+																				nameSelect
+																						.append('<option value="' + name.name + '">'
+																								+ name.name
+																								+ '</option>'); // 이름 옵션 추가
+																			});
+																},
+																error : function(
+																		xhr,
+																		status,
+																		error) {
+																	console
+																			.error(xhr.responseText); // 에러 처리
+																}
+															});
+												} else {
+													nameSelect.empty(); // 카테고리가 선택되지 않은 경우 이름 셀렉트 박스 비우기
+													nameSelect
+															.append('<option value="">이름 선택</option>'); // 기본 옵션 추가
+												}
+											});
+						}
+
+						// 페이지 로드 시 초기화
+						$('.ingredient-form').each(function() {
+							updateNames($(this));
+						});
+					});
+
+	// 폼 제출 버튼 클릭 시 모든 폼 데이터를 서버로 전송
+	$('#submit-all').click(function() {
+		var formsData = []; // 모든 폼 데이터를 저장할 배열
+
+		// 재료 폼 데이터를 객체로 변환하여 배열에 추가
+		$('.ingredient-form').each(function() {
+			var Iform = {
+				title : $('#title').val(),
+				categoryId : $(this).find('select[name="categoryId"]').val(),
+				name : $(this).find('select[name="name"]').val(),
+				unit : $(this).find('textarea[name="unit"]').val()
+			};
+			formsData.push(Iform);
+		});
+
+		// JSON 형식으로 변환
+		var jsonData1 = JSON.stringify(formsData);
+
+		// AJAX 요청
+		$.ajax({
+			url : '/submit_all_forms-update', // 서버 엔드포인트
+			method : 'POST',
+			contentType : "application/json;charset=utf-8", // JSON 형식으로 전송
+			data : jsonData1,
+			success : function(response) {
+				// 성공 시 처리할 내용
+				console.log(response);
+				// 페이지를 리다이렉트
+				Android.redirectToMainActivity(); // 리다이렉트할 페이지의 경로
+			},
+			error : function(xhr, status, error) {
+				// 에러 처리
+				console.error(xhr.responseText);
+			}
+		});
+
+		// 두 번째 폼 데이터를 객체로 변환하여 배열에 추가
+		var Rform = {
+			title : $('#title').val(),
+			writer : $('#writer').val(),
+			content : $('#content').val()
+		};
+		formsData.push(Rform);
+
+		// JSON 형식으로 변환
+		var jsonData2 = JSON.stringify(Rform);
+
+		// AJAX 요청 - 두 번째 폼 데이터
+		$.ajax({
+			url : '/submit_recipe_update', // 서버 엔드포인트
+			method : 'put',
+			contentType : "application/json;charset=utf-8", // JSON 형식으로 전송
+			data : jsonData2,
+			success : function(response) {
+				// 성공 시 처리할 내용
+				console.log(response);
+				// 페이지를 리다이렉트
+				Android.redirectToMainActivity(); // 리다이렉트할 페이지의 경로
+			},
+			error : function(xhr, status, error) {
+				// 에러 처리
+				console.error(xhr.responseText);
+			}
+		});
+	});
+</script>
+</html>

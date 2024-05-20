@@ -1,0 +1,101 @@
+<!DOCTYPE HTML>
+<!--
+    Phantom by HTML5 UP
+    html5up.net | @ajlkn
+    Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Generic - Phantom by HTML5 UP</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <link rel="stylesheet" th:href="@{/assets/css/main.css}" />
+    <noscript>
+        <link rel="stylesheet" th:href="@{/assets/css/noscript.css}" />
+    </noscript>
+</head>
+<body class="is-preload">
+    <div class="mb-3 mt-3">
+        <label for="content">INGREDIENTS</label>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Unit</th>
+                    <th>Checkbox</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="ingr : ${ingrBoards}">
+                    <td th:text="${ingr.name}"></td>
+                    <td th:text="${ingr.unit}"></td>
+                    <td>
+                        <button type="button" class="btn btn-primary CheckBox"
+                                data-row-id="row_${rowStat.index}"
+                                th:attr="data-board-num=${board.num}" style="width:100px;">미보유</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+   <div class="mb-3 mt-3">
+							<label for="content">TOTALPRICE</label>
+							<textarea class="form-control" id="total" name="total"
+								readonly="readonly" th:text="${total+' 원'}" style="resize:none; width:30%; height:50px;"></textarea>
+						</div>
+	
+    <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
+    <script>
+       // 보유/미보유 버튼 클릭 시
+			$(".CheckBox")
+					.click(
+							function() {
+								var buttonText = $(this).text();
+								var ingredientPriceString = $(this).closest("tr")
+										.find(".unit").text().trim(); // 재료 가격 추출
+								var ingredientName = $(this).closest("tr").find(
+										"td:first").text().trim(); // 재료 이름 추출
+								var boardNum = $(this).data("board-num");
+	
+								// 보유 상태인지 여부에 따라 데이터 구성
+								var formData = {
+									ingredientName : ingredientName,
+									isOwned : buttonText === "보유",
+									boardNum: boardNum
+								};
+	
+								// AJAX를 사용하여 서버에 데이터 전송
+								$
+										.ajax({
+											type : "POST",
+											contentType : "application/json;charset=utf-8",
+											url : "/updatePrice/"+boardNum, // 서버 엔드포인트
+											data : JSON.stringify(formData), // JSON 데이터로 변환하여 전송
+											success : function(price) {
+												// 성공 시 총 가격을 업데이트
+												var currentTotal = parseInt($(
+														"#total").text().replace(
+														" 원", ""));
+												var updatedTotal = buttonText === "보유" ? currentTotal
+														- price
+														: currentTotal - price;
+												$("#total").text(
+														updatedTotal + " 원");
+											},
+											error : function(error) {
+												console.error("가격 업데이트 실패:", error);
+											}
+										});
+	
+								// 버튼 텍스트 변경
+								if (buttonText === "미보유") {
+									$(this).text("보유");
+									formData.isOwned = true; // 버튼 텍스트가 "미보유"일 때는 isOwned를 true로 설정
+								} else if (buttonText === "보유") {
+									$(this).text("미보유");
+									formData.isOwned = false; // 버튼 텍스트가 "보유"일 때는 isOwned를 false로 설정
+								}
+							});
+    </script>
+</body>
+</html>

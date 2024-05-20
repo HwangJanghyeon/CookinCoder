@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<title>Your Title Here</title>
+	<!-- 기타 메타데이터 및 스크립트 -->
+
+	<!-- 외부 CSS 파일 연결 -->
+	<link rel="stylesheet" href="/assets/css/main.css">
+</head>
+
+<body>
+	<!-- Header -->
+                    <header id="header" th:replace="include/header :: header"></header>
+
+                <!-- Menu -->
+                  <nav id="menu">
+    <h2>Menu</h2>
+    <ul>
+        <li><a th:href="@{/}">Home</a></li>
+        <li><a th:href="@{/view}">Ipsum veroeros</a></li>
+        <li><a th:href="@{/view}">Tempus etiam</a></li>
+        <li><a th:href="@{/view.html}">Consequat dolor</a></li>
+        <li><a th:href="@{/elements.html}">Elements</a></li>
+    </ul>
+</nav>
+	<div>
+		<div class="container mt-3">
+			<h2>한 끼를 요청해 주세요</h2>
+			<table class="table table-hover">
+				<thead>
+					<tr>
+						<th>번호</th>
+						<th>제목</th>
+						<th>작성자</th>
+						<th>작성일
+						<th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="board : ${boards}">
+						<td th:text="${board.num}"></td>
+						<td><a th:href="'request_view/' + ${board.num}" th:text="${board.title}"></a></td>
+						<td th:text="${board.writer}"></td>
+						<td th:text="${#dates.format(board.regdate, 'yyyy-MM-dd')}"></td>
+					</tr>
+				</tbody>
+			</table>
+			<a href="/request/request_insert" class="btn btn-primary">게시글 작성</a>
+			<!--<div class="d-flex justify-content-between mt-5">
+			<ul class="pagination" th:with="start=${p.startPage}. end=${p.endPage}">
+				 이전 
+				<li class="page-item" th:if="${p.startPage > p.blockPage}"><a class="page-link"
+						th:href="'/request_list?pageNum' + ${p.startPage - p.blockPage}">이전</a></li>
+				 페이지 번호 
+				<th:block th:each="page: ${#numbers.sequence(start, end)}">
+					<li class="page-item-active" th:if="${p.currentPage == page}"><a class="page-link"
+							href="#">[[${page}]]</a></li>
+					<li class="page-itme-active" th:if="${p.currentPage != page}"><a class="page-link"
+							href="'/request_list?pageNum='+${page}">[[${page}]]</a></li>
+				</th:block>
+				 다음 
+				<li class="page-item" th:if="${p.endPage < p.totPage}"><a class="page-link"
+						th:href="'/request_list?pageNum'+${p.endPage+1}"></a>다음</li>
+			</ul>
+		</div>-->
+		</div>
+	</div>
+</body>
+<script>
+    window.onload = function() {
+        // 안드로이드 웹뷰인 경우에만 실행
+        var userAgent = navigator.userAgent.toLowerCase();
+        var isAndroidWebView = userAgent.indexOf('android') > -1 && userAgent.indexOf('wv') > -1;
+        
+        if (isAndroidWebView) {
+            // 안드로이드 웹뷰에서는 header와 nav 요소 숨기기
+            var header = document.getElementById("header");
+            var nav = document.getElementById("menu");
+            
+            if (header && nav) {
+                header.style.display = "none";
+                nav.style.display = "none";
+            }
+        }
+    }
+</script>

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>회원가입</title>
+    <link rel="stylesheet" href="/assets/css/main.css">
+</head>
+<body>
+    <div class="container mt-3">
+        <form id="joinForm">
+            <div class="mb-3 mt-3">
+                <label for="username">User Name:</label>
+                <input type="text" class="form-control" id="username" placeholder="Enter username" name="username">
+            </div>
+            <div class="mb-3 mt-3">
+                <label for="password">Password:</label>
+                <input type="password" class="form-control" id="password" placeholder="Enter password" name="password">
+            </div>
+            <div class="mb-3 mt-3">
+                <label for="email">Email:</label>
+                <input type="email" class="form-control" id="email" placeholder="Enter email" name="email">
+            </div>
+            <button type="button" class="btn btn-primary" onclick="submitJoin()">회원가입</button>
+        </form>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        function submitJoin() {
+            $.ajax({
+                type: "POST",
+                url: "/member/join",
+                contentType: "application/json",
+                data: JSON.stringify({
+                    username: $("#username").val(),
+                    password: $("#password").val(),
+                    email: $("#email").val()
+                }),
+                success: function(response) {
+                    alert("회원가입 성공");
+                    window.location.href = "/member/login"; // 회원가입 성공 시 로그인 페이지로 리다이렉트
+                },
+                error: function() {
+                    alert("회원가입 실패");
+                }
+            });
+        }
+    </script>
+</body>
+</html>

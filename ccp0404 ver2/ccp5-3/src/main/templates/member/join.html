@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+    <!-- 기타 메타데이터 및 스크립트 -->
+
+    <!-- 외부 CSS 파일 연결 -->
+    <link rel="stylesheet" href="/assets/css/main.css">
+    <style>
+        body {
+            margin: 10%;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header -->
+    <header id="header" th:replace="include/header :: header"></header>
+
+    <!-- Menu -->
+    <nav id="menu">
+        <h2>Menu</h2>
+        <ul>
+            <li><a th:href="@{/}">Home</a></li>
+            <li><a th:href="@{/view}">Ipsum veroeros</a></li>
+            <li><a th:href="@{/view}">Tempus etiam</a></li>
+            <li><a th:href="@{/view.html}">Consequat dolor</a></li>
+            <li><a th:href="@{/elements.html}">Elements</a></li>
+        </ul>
+    </nav>
+   
+    <h2>회원가입</h2>
+   <form action="/member/join" method="post">
+    <div>
+        <label for="username">ID:</label>
+        <input type="text" id="username" name="username" required>
+    </div>
+    <div>
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required>
+    </div>
+    <div>
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required>
+    </div>
+    <button type="submit">가입하기</button>
+</form>
+
+    <p>이미 계정이 있으신가요? <a href="/member/login">로그인</a></p>
+</body>
+</html>
